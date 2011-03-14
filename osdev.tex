@@ -17,19 +17,8 @@
 \newmnemonic{LGDT}{Load Global Descriptor Table}
 
 \input{acronym}
-% TODO: Figure out if we want to use built in operating system as the
-% expansion of BIOS, or if we want to use both. If both, how do we get the
-% glossaries package to play ball?
-%     \newacronym{built-in-os}{BIOS}{Built~in~Operating~System}
+\input{main-glossary-entries}
 
-\newglossaryentry{bit}{name=bit,description={Binary toggle, there are 8 bits to a byte.}}
-\newglossaryentry{x86}{name=x86,description={assembler thing}}
-\newglossaryentry{x86-64}{name=x86-64,description={Extension of the x86 CPU
-    architecture to 64 bits.}}
-\newglossaryentry{page fault}{name=page~fault,description={Occurs when interrupt~14 fires.}}
-\newglossaryentry{little endian}{%
-  name=little~endian,
-  description={Opposite of big endian.\todo{summarize this... how!}}}
 \glsaddall
 
 \newenvironment{technote}{%
@@ -148,8 +137,8 @@ register\todo{Expand this explaining how to use the LGDT assembler
 \gls*{gdtr} is an oddly shaped machine register that acts as a pointer
 containing either 48 bits or 80 bits depending on if a 32 bit mode or 64
 bit mode is in use. Figure \ref{fig:GDTR} shows the layout of this machine
-register.\cn\note{We have this repeated twice in different ways, see first
-  paragraph.}
+register\todo{We have this repeated twice in different ways, see first
+  paragraph.}.\cn
 
 There are four system descriptor registers: \register{GDTR},
 \register{IDTR}, \register{LDTR}, and
@@ -159,7 +148,7 @@ On segmentation, there is no way to disable segmentation on
 32~bit\cite[3.2.4]{intel-v3A} x86~processors.\cite[3.1]{intel-v3A} For
 the 64bit architectures segmentation is largely unused. Intel specification
 states that a processor in 64~bit mode will not do runtime segment limit
-checks.
+checks.\cn
 
 Paging is optional.\cn
 
@@ -172,7 +161,7 @@ Paging is optional.\cn
 Simplest way to setup segmentation on x86 architectures. Assumes that the
 physical disk is a fixed size regardless of the actual physical
 disk\todo{Duck was having a hard time understanding what was meant by
-  this, rewrite/improve.}. No general protection faults will be generated.
+  this, rewrite/improve.}. No general protection faults will be generated.\cn
 
 Two segment descriptors that indicate the whole address space\footnote{On
   32 bit systems this is 4GB.} is usable must be created. The initial state
