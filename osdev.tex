@@ -1,0 +1,296 @@
+\documentclass[oneside,english,final]{amsbook}
+\input{prelude}
+\glsSetCompositor{-}
+\newcommand\register[1]{\texttt{#1}}
+\def\acronymtype{acronym}
+\newglossary[alg]{acronym}{acr}{acn}{\acronymname}
+\makeglossaries
+\glsenablehyper
+\newcommand\cn{{\small{\ap{\textbf{[\textit{citation-needed}]}}}}}
+\newcommand\newmnemonic[2]{}
+\glsaddall[types={main,\acronymtype}]
+\newmnemonic{ADD}{Addition}
+\newmnemonic{SUB}{Subtract}
+\newmnemonic{DIV}{Division}
+\newmnemonic{MUL}{Multiplication}
+\newmnemonic{MOV}{Move}
+\newmnemonic{LGDT}{Load Global Descriptor Table}
+
+
+\newacronym{acpi}{ACPI}{Advanced Control~and~Power Interface}
+\newacronym{rsdt}{RSDT}{What is it?}
+\newacronym{xsdt}{XSDT}{What is it?}
+\newacronym{cpu}{CPU}{Central Processing Unit}
+\newacronym{usb}{USB}{Universal Serial Bus}
+%Also could be "personal computer", but we will need to talk about
+%the program counter much more then the simplified term 'personal computer'.
+\newacronym{pc}{PC}{Program Counter}
+\newacronym{gdtr}{\register{GDTR}}{Global Descriptor Table Register}
+\newacronym{gdt}{GDT}{Global Descriptor Table}
+\newacronym{bios}{BIOS}{Basic~Input/Output~System}
+% TODO: Figure out if we want to use built in operating system as the
+% expansion of BIOS, or if we want to use both. If both, how do we get the
+% glossaries package to play ball?
+%     \newacronym{built-in-os}{BIOS}{Built~in~Operating~System}
+
+\newglossaryentry{bit}{name=bit,description={Binary toggle, there are 8 bits to a byte.}}
+\newglossaryentry{x86}{name=x86,description={assembler thing}}
+\newglossaryentry{x86-64}{name=x86-64,description={Extension of the x86 CPU
+    architecture to 64 bits.}}
+\newglossaryentry{page fault}{name=page~fault,description={Occurs when interrupt~14 fires.}}
+\newglossaryentry{little endian}{%
+  name=little~endian,
+  description={Opposite of big endian.\todo{summarize this... how!}}}
+\glsaddall
+
+\newenvironment{technote}{%
+    \par
+    \begin{tikzpicture}
+    \node[rectangle,minimum width=0.9\textwidth] (m)
+    \bgroup\begin{minipage}{0.85\textwidth}$\!\!\!$\textbf{TechNote:} \ignorespaces%
+}{%
+    \end{minipage}\egroup;
+    \draw[dashed] (m.south west) rectangle (m.north east);
+    \end{tikzpicture}
+}
+
+\newenvironment{testidea}{%
+    \par
+    \begin{tikzpicture}
+    \node[rectangle,minimum width=0.9\textwidth] (m)
+    \bgroup\begin{minipage}{0.85\textwidth}$\!\!\!$\textbf{TestIdea:} \ignorespaces%
+}{%
+    \end{minipage}\egroup;
+    \draw (m.south west) rectangle (m.north east);
+    \end{tikzpicture}
+}
+
+%\newcommand\technote[1]{\emph{\tiny{Technical~note: #1}}}
+
+\title{Art of Operating System Development}
+%\author{Nixeagle}
+%\address{i@nixeagle.org}
+
+\begin{document}
+\maketitle
+\frontmatter
+\tableofcontents
+\mainmatter
+
+\part{OS DEV}
+\chapter{Forward/Introduction}
+We intend to explain how to develop an operating system on the \gls{x86}
+{architecture}\footnote{This includes the \gls{x86-64} variants. Later in
+  the far far future discussion on other machine types may be included.}.
+
+As the \gls{x86} architecture is \gls{little endian}, all of our
+figures and notation will also be little~endian. So when talking about
+where a~\keyword{bit} is~in a~\keyword{byte} we will start counting from
+the~right to~left.\cite{wikipedia_endianness_2011,cohen_holy_war_1980}
+
+\skipline
+\centerline{
+  \begin{bytefield}{8}
+    \bitheader[b]{0-7} \\
+    \wordbox{1}{Byte}
+  \end{bytefield}
+}
+
+A machine \keyword{double word} is 32 bits. \todo{reference intel or amd manual.} So we are clear, that is 4 bytes.
+\skipline
+\centerline{
+  \begin{bytefield}{32}
+    \bitheader[b]{0,7,8,15,16,23,24,31} \\
+    \bitbox{8}{} \bitbox{8}{} \bitbox{8}{} \bitbox{8}{}
+  \end{bytefield}
+}
+
+There are various other terms including nibble, word and quadword. We
+will discuss these when they come up. \todo{where?}
+
+All x86 computers start life in \keyword{real~mode}. Real mode is~very
+limited, only~1MB of~memory may be accessed.\cn\todo{Check that real mode
+  memory limits are correct}
+
+Either the \keyword{boot loader} or the \keyword{kernel} has to~bring
+the~CPU into protected mode.
+
+\keyword{Byte~addressing} means memory access is~accessed as~a~sequence
+of~bytes.\ref{intel-v3A}
+
+An \keyword{address~space} is the set of addressable bytes that can be
+selected at a given time.\ref{intel-v3A}
+
+Since the~whole memory space cannot be~accessed at~one~time on a~32bit
+system the concept of~\keyword{segments} was invented. A~segment is~just
+a~named address-space. There are six segment registers on a 32bit
+system.\footnote{intel1 3-4} \todo{Write something about how many of these
+  exist on 64 bit systems.} A dedicated segment can be assigned to the
+\keyword{stack} as well as to the currently executing code. \todo{Discuss
+  assembly level segment syntax, both intel and gas versions.}
+
+\chapter{Boot Loader}
+On x86 systems the \gls*{bios} starts execution at physical address
+0x7c00.
+
+\begin{technote}%
+  The contents of the \register{DL}~register indicate which drive contains
+  the~loaded boot-sector. Store this number for~later reference if
+  the~kernel is~to~handle being booted from a~machine with more than
+  one~drive.
+\end{technote}
+
+
+
+%\cite{intel-x86-vol2A}
+\chapter{GDT}
+The \gls*{gdtr} is a machine register that serves as a pointer to the linear
+address location of the \gls*{gdt}.
+
+Is not considered a segment. Only the LDT and TSS are
+segments.\cite[2.1.2]{intel-v3A}
+
+LGDT is the assembly mnemonic for loading a value to the \gls*{gdtr}
+register\todo{Expand this explaining how to use the LGDT assembler
+  instruction. Might need moved to a later part of this book.}.
+
+\gls*{gdtr} is an oddly shaped machine register that acts as a pointer
+containing either 48 bits or 80 bits depending on if a 32 bit mode or 64
+bit mode is in use. Figure \ref{fig:GDTR} shows the layout of this machine
+register.\cn\note{We have this repeated twice in different ways, see first
+  paragraph.}
+
+There are four system descriptor registers: \register{GDTR},
+\register{IDTR}, \register{LDTR}, and
+\register{TR}.\cite[2.1.6.1]{intel-v3A}
+
+On segmentation, there is no way to disable segmentation on
+32~bit\cite[3.2.4]{intel-v3A} x86~processors.\cite[3.1]{intel-v3A} For
+the 64bit architectures segmentation is largely unused. Intel specification
+states that a processor in 64~bit mode will not do runtime segment limit
+checks.
+
+Paging is optional.\cn
+
+\begin{testidea}%
+  Verify memory size reading is correct.\par
+  After GDT is setup, attempt to set the last byte of reachable memory to
+  $0xE$ and attempt to read it back.
+\end{testidea}
+\section{Basic Flat Memory Model}
+Simplest way to setup segmentation on x86 architectures. Assumes that the
+physical disk is a fixed size regardless of the actual physical
+disk\todo{Duck was having a hard time understanding what was meant by
+  this, rewrite/improve.}. No general protection faults will be generated.
+
+Two segment descriptors that indicate the whole address space\footnote{On
+  32 bit systems this is 4GB.} is usable must be created. The initial state
+of the \register{DS}~data segment after initializing this setup will be 0.
+
+\begin{figure}
+  \caption{GDTR}
+  \label{fig:GDTR}
+  \begin{tikzpicture}%
+    \draw (0,0) rectangle 
+      node[pos=0.5]{Base Address} (6,2em) rectangle 
+      node[pos=0.5]{Length} (9,0);
+    \node[above right] at (0,2em) {\tiny{47}};
+    \node[above left] at (6,2em) {\tiny{16}};SR  \node[above right] at (6,2em) {\tiny{15}};
+    \node[above left] at (9,2em) {\tiny{0}};
+    \node [below right,color=gray] at (0,2em) {\tiny{(32)}};
+    \node [below right,color=gray] at (6,2em) {\tiny{(16)}};
+  \end{tikzpicture}
+\end{figure}
+
+
+\begin{tikzpicture}%
+  \node [rectangle,draw] {GDTR};
+  \node [above right] at (0,1em) {\tiny{47}};
+\end{tikzpicture}
+
+% Maybe useful... we shall see. #1=lowbit, #2=highbit, #3=width, #4=text.
+% if we want to use it, don't forget the greyed out number in the upper
+% left corner.
+\def\mythingie#1#2#3#4{%
+  \def\mywidth{#3}
+  \node[rectangle,draw,align=center,minimum height=2em,minimum width=\mywidth] {#4} 
+    node[above left=1em and \mywidth/2-0.5cm]{\tiny{#2}}
+    node[above right=1em and \mywidth/2-0.5cm]{\tiny{#1}}}
+\tikz\mythingie{16}{47}{4cm}{GDT};
+\tikz\mythingie{0}{15}{2cm}{blah};
+
+\chapter{ACPI}
+A machine independent method of configuring various input and output
+devices. Detecting if a computer has ACPI support involves looking in
+specific memory regions for the string \verb|"RSP PTR "|. Finding this on a
+16 byte boundary marks the start of the RSPT which is used for finding
+other ACPI tables.\cn
+
+Checksum fields in all the tables are a single byte that when added to all
+the other bytes in the table, the whole table will sum to
+0.\cite[Table~6-33]{acpi-spec4a}
+
+\chapter{IRQ}
+\chapter{IRS}
+\chapter{Keyboard driver}
+\section{Interrupt based}
+\section{Poll based}
+\chapter{Memory Management}
+\chapter{Networking}
+Want to cover how to write a workable TCP/IP stack.
+\chapter{Paging}
+\chapter{Context Switching}
+\chapter{Userland}
+\chapter{multi tasking}
+\chapter{Threading}
+\chapter{Locking}
+\chapter{Linker files}
+\chapter{Testing}
+\chapter{64 bit x86}
+\chapter{Multiboot spec}
+\chapter{PCI}
+\chapter{USB}
+
+
+\chapter{FAQ}
+\section{What is a reliable way to cause a reboot in x86 assembler?}
+
+just load a 0-sized IDT and interrupt
+
+
+\section{How do I cause a triple fault?}
+
+You can't without interrupts setup. \todo{add more!} \marginnote{foobar}[1em]
+
+\section{Why can't I disable interrupts?}
+
+\section{Does anything call sti? Is cli run in ring0?}
+
+\section{How much memory can a x86 processor address in real mode?}
+
+
+OTHER
+
+Leave BDA and IVT alone.
+
+Always best to load your kernel at 1MB.
+
+
+on 32bit x86 machines EAX always contains the return value.
+
+\appendix
+\part{Appendix}
+
+\bibliographystyle{plainurl}
+\nocite{*}
+\bibliography{osdev}
+
+\printglossaries
+
+\listoffigures
+\listoftables
+\end{document}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
