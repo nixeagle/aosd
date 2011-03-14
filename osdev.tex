@@ -65,8 +65,11 @@
 \tableofcontents
 \mainmatter
 
-\part{OS DEV}
 \chapter{Forward/Introduction}
+\part{First things}
+{\small\textit{Note that this book will be seperated into multiple parts. The
+  first few chapters will cover a general overview of the subject and
+  various aspects of the boot sequence.}}
 We intend to explain how to develop an operating system on the \gls{x86}
 {architecture}\footnote{This includes the \gls{x86-64} variants. Later in
   the far far future discussion on other machine types may be included.}.
@@ -240,7 +243,12 @@ Want to cover how to write a workable TCP/IP stack.
 \chapter{PCI}
 \chapter{USB}
 
-\chapter{FAQ}
+\chapter{FAQ} {\small\textit{This chapter will not exist in this form in
+    the 1.0 version of this book. The intent here is simply to indicate
+    questions that ought to have answers. The porported
+    answers to the questions in this chapter should be treated with care
+    unless proper citations are given. Again in due time various questions
+    and answers will wind up in the book text proper.}}
 \section{What is a reliable way to cause a reboot in x86 assembler?}
 
 Just load a 0-sized IDT and interrupt.\footnote{Does not work in virtual
