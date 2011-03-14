@@ -22,7 +22,7 @@
 \glsaddall
 
 \newenvironment{technote}{%
-    \par
+    \skipline\par
     \begin{tikzpicture}
     \node[rectangle,minimum width=0.9\textwidth] (m)
     \bgroup\begin{minipage}{0.85\textwidth}$\!\!\!$\textbf{TechNote:} \ignorespaces%
@@ -30,10 +30,11 @@
     \end{minipage}\egroup;
     \draw[dashed] (m.south west) rectangle (m.north east);
     \end{tikzpicture}
+    \skipline
 }
 
 \newenvironment{testidea}{%
-    \par
+    \skipline\par
     \begin{tikzpicture}
     \node[rectangle,minimum width=0.9\textwidth] (m)
     \bgroup\begin{minipage}{0.85\textwidth}$\!\!\!$\textbf{TestIdea:} \ignorespaces%
@@ -41,6 +42,7 @@
     \end{minipage}\egroup;
     \draw (m.south west) rectangle (m.north east);
     \end{tikzpicture}
+    \skipline
 }
 
 %\newcommand\technote[1]{\emph{\tiny{Technical~note: #1}}}
@@ -62,11 +64,8 @@
 We intend to explain how to develop an operating system on the \gls{x86}
 {architecture}\footnote{This includes the \gls{x86-64} variants. Later in
   the far far future discussion on other machine types may be included.}.
-
-As the \gls{x86} architecture is \gls{little endian}, all of our
-figures and notation will also be little~endian. So when talking about
-where a~\gls{bit} is~in a~\gls{byte} we will start counting from
-the~right to~left.\cite{wikipedia_endianness_2011,cohen_holy_war_1980}
+\section{Data sizes}
+Explain bit, nibble, byte, word, double word, quad word.
 
 \begin{figure}[h]%
   \caption{\protect\Gls{byte}}
@@ -78,8 +77,9 @@ the~right to~left.\cite{wikipedia_endianness_2011,cohen_holy_war_1980}
   \end{bytefield}
 \end{figure}
 
-A machine \gls{double word} is 32 bits. \todo{reference intel or amd
-  manual.} So we are clear, that is 4 bytes.
+A machine \gls{double word} is 32 bits.\cn So we are clear, that is 4
+bytes.
+
 \begin{figure}[h]%
   \caption{\protect\Gls{double word}\relax}
   \label{fig:double-word}
@@ -93,30 +93,26 @@ A machine \gls{double word} is 32 bits. \todo{reference intel or amd
 There are various other terms including \gls{nibble}, \gls{word} and \gls{quad word}. We
 will discuss these when they come up. \todo{where?}
 
-All x86 computers start life in \keyword{real~mode}. Real mode is~very
-limited, only~1MB of~memory may be accessed.\cn\todo{Check that real mode
-  memory limits are correct}
+\section{Which Endian?}
+% further explain what endian is and how we will handle data sizes
+As the \gls{x86} architecture is \gls{little endian}, all of our figures
+and notation will also be little~endian. So when talking about where
+a~\gls{bit} is~in a~\gls{byte} we will start counting from the~right
+to~left.\cite{wikipedia_endianness_2011,cohen_holy_war_1980} Looking at
+figure \ref{fig:byte}, we notice that the 0\ap{th} bit is located to the far right
+and the 7\ap{th} bit is located to the far left.
 
-Either the \keyword{boot loader} or the \keyword{kernel} has to~bring
-the~CPU into protected mode.
+The attentive reader should note that we have started counting at
+\emph{zero} instead of \emph{one}. This is the traditional way for computer
+scientists to count.\cn\todo{I'd really like to rewrite this with a better
+  word flow\ldots.}
 
-\keyword{Byte~addressing} means memory access is~accessed as~a~sequence
-of~bytes.\ref{intel-v3A}
-
-An \keyword{address~space} is the set of addressable bytes that can be
-selected at a given time.\ref{intel-v3A}
-
-Since the~whole memory space cannot be~accessed at~one~time on a~32bit
-system the concept of~\keyword{segments} was invented. A~segment is~just
-a~named address-space. There are six segment registers on a 32bit
-system.\footnote{intel1 3-4} \todo{Write something about how many of these
-  exist on 64 bit systems.} A dedicated segment can be assigned to the
-\keyword{stack} as well as to the currently executing code. \todo{Discuss
-  assembly level segment syntax, both intel and gas versions.}
 
 \chapter{Boot Loader}
 On x86 systems the \gls*{bios} starts execution at physical address
-0x7c00.
+\verb|0x7c00|. The \gls*{cpu} will get control operating in \gls{real
+  mode}. Real mode is~very limited, only~1MB of~memory may be
+accessed.\cn\todo{Check that real mode memory limits are correct}
 
 \begin{technote}%
   The contents of the \register{DL}~register indicate which drive contains
@@ -124,6 +120,23 @@ On x86 systems the \gls*{bios} starts execution at physical address
   the~kernel is~to~handle being booted from a~machine with more than
   one~drive.
 \end{technote}
+
+Either the \gls{boot loader} or the \keyword{kernel} has to~bring
+the~CPU into protected mode.
+
+\Gls{byte addressing} means memory access is~accessed as~a~sequence
+of~bytes.\cite{intel-v3A}
+
+An \gls{address space} is the set of addressable bytes that can be
+selected at a given time.\cite{intel-v3A}
+
+Since the~whole memory space cannot be~accessed at~one~time on a~32bit
+system the concept of~\keyword{segments} was invented. A~segment is~just
+a~named address-space. There are six segment registers on a 32bit
+system.\cite[3-4]{intel-v1}\todo{Write something about how many of these
+  exist on 64 bit systems.} A dedicated segment can be assigned to the
+\keyword{stack} as well as to the currently executing code. \todo{Discuss
+  assembly level segment syntax, both intel and gas versions.}
 
 
 
@@ -172,7 +185,7 @@ Two segment descriptors that indicate the whole address space\footnote{On
   32 bit systems this is 4GB.} is usable must be created. The initial state
 of the \register{DS}~data segment after initializing this setup will be 0.
 
-\begin{figure}
+\begin{figure}[h]
   \caption{GDTR}
   \label{fig:GDTR}
   \begin{tikzpicture}%
@@ -188,21 +201,21 @@ of the \register{DS}~data segment after initializing this setup will be 0.
 \end{figure}
 
 
-\begin{tikzpicture}%
-  \node [rectangle,draw] {GDTR};
-  \node [above right] at (0,1em) {\tiny{47}};
-\end{tikzpicture}
+%\begin{tikzpicture}%
+%  \node [rectangle,draw] {GDTR};
+%  \node [above right] at (0,1em) {\tiny{47}};
+%\end{tikzpicture}
 
 % Maybe useful... we shall see. #1=lowbit, #2=highbit, #3=width, #4=text.
 % if we want to use it, don't forget the greyed out number in the upper
 % left corner.
-\def\mythingie#1#2#3#4{%
-  \def\mywidth{#3}
-  \node[rectangle,draw,align=center,minimum height=2em,minimum width=\mywidth] {#4} 
-    node[above left=1em and \mywidth/2-0.5cm]{\tiny{#2}}
-    node[above right=1em and \mywidth/2-0.5cm]{\tiny{#1}}}
-\tikz\mythingie{16}{47}{4cm}{GDT};
-\tikz\mythingie{0}{15}{2cm}{blah};
+%\def\mythingie#1#2#3#4{%
+%  \def\mywidth{#3}
+%  \node[rectangle,draw,align=center,minimum height=2em,minimum width=\mywidth] {#4} 
+%    node[above left=1em and \mywidth/2-0.5cm]{\tiny{#2}}
+%    node[above right=1em and \mywidth/2-0.5cm]{\tiny{#1}}}
+%\tikz\mythingie{16}{47}{4cm}{GDT};
+%\tikz\mythingie{0}{15}{2cm}{blah};
 
 \chapter{ACPI}
 A machine independent method of configuring various input and output
@@ -230,6 +243,8 @@ Want to cover how to write a workable TCP/IP stack.
 \chapter{multi tasking}
 \chapter{Threading}
 \chapter{Locking}
+\section{Mutex}
+
 \chapter{Linker files}
 \chapter{Testing}
 \chapter{64 bit x86}
