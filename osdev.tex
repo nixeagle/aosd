@@ -68,7 +68,6 @@
 %\newcommand\technote[1]{\emph{\tiny{Technical~note: #1}}}
 
 \title{Art of Operating System Development}
-%\author{Nixeagle}
 %\address{i@nixeagle.org}
 
 \begin{document}
@@ -231,10 +230,11 @@ the other bytes in the table, the whole table will sum to
 0.\cite[Table~6-33]{acpi-spec4a}
 
 \chapter{IRQ}
-\chapter{IRS}
+\chapter{ISR}
 \chapter{Keyboard driver}
 \section{Interrupt based}
 \section{Poll based}
+
 \chapter{Memory Management}
 \chapter{Networking}
 Want to cover how to write a workable TCP/IP stack.
@@ -255,7 +255,9 @@ Want to cover how to write a workable TCP/IP stack.
 \chapter{FAQ}
 \section{What is a reliable way to cause a reboot in x86 assembler?}
 
-just load a 0-sized IDT and interrupt
+Just load a 0-sized IDT and interrupt.\footnote{Does not work in virtual
+  box and on some hardware.}\cn Also possibly look at
+\url{https://github.com/RockerMONO/dux/blob/master/src/metodo/i386/hal/shutdown.c}
 
 
 \section{How do I cause a triple fault?}
