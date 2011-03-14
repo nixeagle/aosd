@@ -65,27 +65,32 @@ We intend to explain how to develop an operating system on the \gls{x86}
 
 As the \gls{x86} architecture is \gls{little endian}, all of our
 figures and notation will also be little~endian. So when talking about
-where a~\keyword{bit} is~in a~\keyword{byte} we will start counting from
+where a~\gls{bit} is~in a~\gls{byte} we will start counting from
 the~right to~left.\cite{wikipedia_endianness_2011,cohen_holy_war_1980}
 
-\skipline
-\centerline{
+\begin{figure}[h]%
+  \caption{\protect\Gls{byte}}
+  \label{fig:byte}
+  \skipline
   \begin{bytefield}{8}
     \bitheader[b]{0-7} \\
     \wordbox{1}{Byte}
   \end{bytefield}
-}
+\end{figure}
 
-A machine \keyword{double word} is 32 bits. \todo{reference intel or amd manual.} So we are clear, that is 4 bytes.
-\skipline
-\centerline{
+A machine \gls{double word} is 32 bits. \todo{reference intel or amd
+  manual.} So we are clear, that is 4 bytes.
+\begin{figure}[h]%
+  \caption{\protect\Gls{double word}\relax}
+  \label{fig:double-word}
+  \skipline
   \begin{bytefield}{32}
     \bitheader[b]{0,7,8,15,16,23,24,31} \\
     \bitbox{8}{} \bitbox{8}{} \bitbox{8}{} \bitbox{8}{}
   \end{bytefield}
-}
+\end{figure}
 
-There are various other terms including nibble, word and quadword. We
+There are various other terms including \gls{nibble}, \gls{word} and \gls{quad word}. We
 will discuss these when they come up. \todo{where?}
 
 All x86 computers start life in \keyword{real~mode}. Real mode is~very
