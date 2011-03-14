@@ -1,0 +1,52 @@
+* Art of Operating System Development[fn:1]
+
+A book describing how operating systems are written.[fn:2] This work
+intends to provide a high level overview of the concepts and theory how
+operating systems work along with nitty gritty details for hobbyist
+osdevers. Initial topics cover the x86 machine architecture only. Later
+work will include at least the MIPS machine architecture.[fn:3]
+
+** Errors/Omissions/Corrections
+   I would greatly appreciate any reports of factual errors or
+   omissions. Please use the github issue tracker to report them or find me
+   on IRC.
+
+   Please note that at this early stage I am /not/ terribly interested in
+   hearing about grammatical or spelling mistakes. Work on the book is at
+   the equivalent of a software project's pre-alpha stage. Sentences and
+   paragraphs are highly likely to be rewritten multiple times and any
+   grammar errors present in the current copies will vanish with new errors
+   replacing them![fn:4]
+
+** Downloading
+   A pdf document from the most recent tagged repository version is located
+   on github's download servers. Grab a copy by clicking the big download
+   button in the upper right hand corner of this repository. The filename
+   will look something like =osdev-v0.x.y.z.pdf=.
+
+   Later a Makefile will be written so the task of generating copies from
+   the LaTeX sources is simplified. 
+
+** License
+   Please consider all work in this repository to be released under the
+   GFDL. I'll include more licensing information as work progresses.
+
+* Footnotes
+
+[fn:1] Perhaps should be Art of Operating System Design.
+
+[fn:2] I'd like to improve this intro sentence with a better description of
+the book. However the purview of the book is quite large and much of the
+book is yet to be written so an accurate overview is hard to think
+of. Suggestions welcome.
+
+[fn:3] I (Nixeagle) am also familiar with the ARM micro architecture at a
+theoretical level having read large parts of the ARM manual.
+
+[fn:4] At a later stage I will be much more interested in reports of this
+nature. Likely around the time the version of the book is at 0.6 or
+higher. Around version 0.1 or 0.2 I will introduce "stable" sections where
+the research and factual accuracy are strongly believed to be
+correct. Grammar and spelling corrections in these sections will be greatly
+appreciated.
+
