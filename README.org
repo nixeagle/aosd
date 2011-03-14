@@ -22,7 +22,7 @@ work will include at least the MIPS machine architecture.[fn:3]
    A pdf document from the most recent tagged repository version is located
    on github's download servers. Grab a copy by clicking the big download
    button in the upper right hand corner of this repository. The filename
-   will look something like =osdev-v0.x.y.z.pdf=.
+   will look something like =osdev-v0.x.y.pdf=.
 
    Later a Makefile will be written so the task of generating copies from
    the LaTeX sources is simplified. 
