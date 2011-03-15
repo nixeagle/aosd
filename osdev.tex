@@ -271,10 +271,17 @@ You can't without interrupts setup. \todo{add more!} \marginnote{foobar}[1em]
 
 \section{Why can't I disable interrupts?}
 
-\section{Does anything call sti? Is cli run in ring0?}
+\section{Does anything call sti?}
+
+\section{Is cli run in ring0?}
 
 \section{How much memory can a x86 processor address in real mode?}
 
+\section{Why can't I pop the \register{CS} register?}
+Changing running code would be a JMP\ldots so yea I imagine setting the
+program counter/whatever segment register you use for code\ldots (I think
+cs is mandatory\ldots not sure)\ldots is a simple matter of doing a far
+jump.\cn
 
 OTHER
 
