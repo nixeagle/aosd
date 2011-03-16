@@ -9,14 +9,20 @@
 \newcommand\cn{{\small{\ap{\textbf{[\textit{citation-needed}]}}}}}
 \newcommand\newmnemonic[2]{}
 \glsaddall[types={main,\acronymtype}]
-\newmnemonic{ADD}{Addition}
-\newmnemonic{SUB}{Subtract}
-\newmnemonic{DIV}{Division}
-\newmnemonic{MUL}{Multiplication}
-\newmnemonic{MOV}{Move}
-\newmnemonic{LGDT}{Load Global Descriptor Table}
-\newmnemonic{RETF}{Far Return}
-\newmnemonic{RET}{Near Return}%or just Return...
+\newmnemonic{ADD}{addition}
+\newmnemonic{SUB}{subtract}
+\newmnemonic{DIV}{division}
+\newmnemonic{MUL}{multiplication}
+\newmnemonic{MOV}{move}
+\newmnemonic{NOP}{no operation}
+
+\newmnemonic{RETF}{far return}
+\newmnemonic{RET}{near return}%or just Return...
+
+\newmnemonic{LGDT}{load global descriptor table}
+\newmnemonic{SGDT}{store global descriptor table}
+
+\newmnemonic{SFENCE}{store fence}
 
 \input{acronym}
 \input{main-glossary-entries}
@@ -67,7 +73,8 @@ We intend to explain how to develop an operating system on the \gls{x86}
 {architecture}\footnote{This includes the \gls{x86-64} variants. Later in
   the far far future discussion on other machine types may be included.}.
 \section{Data sizes}
-Explain bit, nibble, byte, word, double word, quad word.
+Explain \gls{bit}, \gls{nibble}, \gls{byte}, \gls{word}, 
+\gls{double word}, and \gls{quad word}.
 
 \begin{figure}[h]%
   \caption{\protect\Gls{byte}}
@@ -219,12 +226,15 @@ of the \register{DS}~data segment after initializing this setup will be 0.
 %\tikz\mythingie{16}{47}{4cm}{GDT};
 %\tikz\mythingie{0}{15}{2cm}{blah};
 
+\chapter{PIT}
+\section{CMOS}
+\chapter{APIC}
 \chapter{ACPI}
 A machine independent method of configuring various input and output
-devices. Detecting if a computer has ACPI support involves looking in
-specific memory regions for the string \verb|"RSP PTR "|. Finding this on a
-16 byte boundary marks the start of the RSPT which is used for finding
-other ACPI tables.\cn
+devices.\cn Detecting if a computer has \gls*{acpi} support involves
+looking in specific memory regions for the string \verb|"RSP PTR "|.\cn
+Finding this on a 16 byte boundary marks the start of the RSPT which is
+used for finding other ACPI tables.\cn
 
 Checksum fields in all the tables are a single byte that when added to all
 the other bytes in the table, the whole table will sum to
@@ -284,6 +294,23 @@ Changing running code would be a JMP\ldots so yea I imagine setting the
 program counter/whatever segment register you use for code\ldots (I think
 cs is mandatory\ldots not sure)\ldots is a simple matter of doing a far
 jump.\cn
+
+\section{How do I read from a FAT16 file format?}
+
+\section{Why is a higher half kernel recommended?}
+At least recommended by osdev wiki\ldots from what the author understands\ldots.
+
+\section{What is the System V ABI?}
+
+\section{How does canonical naming work?}
+
+\section{What is an ABI for?}
+
+\section{What is Long mode on x86\_64?}
+
+\section{How do I change video modes on x86 hardware?}
+Only reasonable way to do this on most hardware is to go through
+\emph{vm86} and real mode \emph{VBE interrupts}\cn. 
 
 OTHER
 
